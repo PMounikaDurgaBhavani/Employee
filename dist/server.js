@@ -16,10 +16,12 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const sequelizedb_1 = __importDefault(require("./db/sequelizedb"));
 const employee_1 = __importDefault(require("./routes/employee"));
+const manager_1 = __importDefault(require("./routes/manager"));
 const app = (0, express_1.default)();
 dotenv_1.default.config();
 app.use(express_1.default.json());
 app.use("/api", employee_1.default);
+app.use("/api", manager_1.default);
 const port = process.env.port;
 (() => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const employee_model_1 = require("../models/employee.model");
 const manager_model_1 = require("../models/manager.model");
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
@@ -66,6 +67,20 @@ router.delete("/manager/:id", (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         yield (result === null || result === void 0 ? void 0 : result.destroy());
         res.status(201).json("Deleted Successfully");
+    }
+    catch (error) {
+        res.status(401).json("Error Occured");
+    }
+}));
+router.get("/allmanager", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield manager_model_1.Manager.findAll({
+            include: {
+                model: employee_model_1.Employee,
+                attributes: ["username", "email", "salary"],
+            },
+        });
+        res.status(201).json(result);
     }
     catch (error) {
         res.status(401).json("Error Occured");

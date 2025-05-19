@@ -6,8 +6,8 @@ import manager from "./routes/manager";
 const app = express();
 dotenv.config();
 app.use(express.json());
-app.use("/api",employee);
-app.use("/api",manager);
+app.use("/api", employee);
+app.use("/api", manager);
 
 const port = process.env.port;
 

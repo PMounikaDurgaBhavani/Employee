@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const employee_model_1 = require("../models/employee.model");
 const express_1 = __importDefault(require("express"));
+const manager_model_1 = require("../models/manager.model");
 const router = express_1.default.Router();
 router.post("/employee", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -71,6 +72,25 @@ router.delete("/employee/:username", (req, res) => __awaiter(void 0, void 0, voi
     catch (error) {
         console.log(error);
         res.status(401).json("Error Occured");
+    }
+}));
+router.get("/oneemployee/:username", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield employee_model_1.Employee.findOne({
+            where: { username: req.params.username },
+            include: {
+                model: manager_model_1.Manager,
+                attributes: ["task"]
+            }
+        });
+        if (!result) {
+            res.status(401).json("User not found");
+        }
+        res.status(201).json(result);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(401).json("Error Occurred");
     }
 }));
 exports.default = router;
