@@ -1,29 +1,34 @@
 import { Employee } from "../models/employee.model";
 import { Manager } from "../models/manager.model";
-import {body,validationResult} from "express-validator";
-import express,{Request,Response} from "express";
+import { body, validationResult } from "express-validator";
+import express, { Request, Response } from "express";
 const router = express.Router();
 
-router.post("/manager",[
-  body("username")
-  .notEmpty().withMessage("Username should not be empty")
-  .isAlphanumeric().withMessage("username should be alphanumeric"),
+router.post(
+  "/manager",
+  [
+    body("username")
+      .notEmpty()
+      .withMessage("Username should not be empty")
+      .isAlphanumeric()
+      .withMessage("username should be alphanumeric"),
 
-  body("task")
-  .notEmpty().withMessage("Task should not be empty")
-], async (req:Request, res:Response) => {
-  try {
-    const  error= await validationResult(req);
-    if(!error.isEmpty()){
-      res.status(400).json({error:error.array()});
-      return;
+    body("task").notEmpty().withMessage("Task should not be empty"),
+  ],
+  async (req: Request, res: Response) => {
+    try {
+      const error = await validationResult(req);
+      if (!error.isEmpty()) {
+        res.status(400).json({ error: error.array() });
+        return;
+      }
+      await Manager.create(req.body);
+      res.status(201).json("Added Task succesfully");
+    } catch (error) {
+      res.status(401).json("Error Occurred");
     }
-    await Manager.create(req.body);
-    res.status(201).json("Added Task succesfully");
-  } catch (error) {
-    res.status(401).json("Error Occurred");
   }
-});
+);
 
 router.get("/manager", async (req, res) => {
   try {
