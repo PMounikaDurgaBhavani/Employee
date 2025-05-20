@@ -1,24 +1,47 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import { Employee, Manager } from "../models";
+import { body, validationResult } from "express-validator";
 
 const router = express.Router();
 
-router.post("/employee", async (req, res) => {
-  try {
-    const field = ["username", "password", "email", "salary"];
-    const valid = Object.keys(Employee.getAttributes());
-    const filter = Object.keys(req.body).filter((f) => !valid.includes(f));
-    if (filter.length > 0) {
-      res.status(401).json("Invalid fields");
-      return;
+router.post(
+  "/employee",
+  [
+    body("username")
+      .notEmpty()
+      .withMessage("Username should not be empty")
+      .isAlphanumeric()
+      .withMessage("Username should be alphanumeric"),
+
+    body("password")
+      .notEmpty()
+      .withMessage("Password should not be empty")
+      .isLength({ min: 6 })
+      .withMessage("Min length is 6"),
+
+    body("email")
+      .notEmpty()
+      .withMessage("Email should not be empty")
+      .isEmail()
+      .withMessage("Invalid Email"),
+
+    body("salary").notEmpty().withMessage("salary should not be empty"),
+  ],
+  async (req: Request, res: Response) => {
+    try {
+      const error = await validationResult(req);
+      if (!error.isEmpty()) {
+        res.status(400).json({ error: error.array() });
+        return;
+      }
+      await Employee.create(req.body);
+      res.status(201).send("Employee added succesfully");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Error Occurred");
     }
-    const result = await Employee.create(req.body, { fields: field });
-    res.status(201).send("Employee added succesfully");
-  } catch (error) {
-    console.log(error);
-    res.status(401).send("Error Occurred");
   }
-});
+);
 
 router.get("/employee", async (req, res) => {
   try {

@@ -1,18 +1,24 @@
 import { Employee } from "../models/employee.model";
 import { Manager } from "../models/manager.model";
-import express from "express";
+import {body,validationResult} from "express-validator";
+import express,{Request,Response} from "express";
 const router = express.Router();
 
-router.post("/manager", async (req, res) => {
+router.post("/manager",[
+  body("username")
+  .notEmpty().withMessage("Username should not be empty")
+  .isAlphanumeric().withMessage("username should be alphanumeric"),
+
+  body("task")
+  .notEmpty().withMessage("Task should not be empty")
+], async (req:Request, res:Response) => {
   try {
-    const inputfields = ["username", "task"];
-    const fields = Object.keys(Manager.getAttributes());
-    const invalid = Object.keys(req.body).filter((f) => !fields.includes(f));
-    if (invalid.length > 0) {
-      res.status(401).json("Invalid Fields");
+    const  error= await validationResult(req);
+    if(!error.isEmpty()){
+      res.status(400).json({error:error.array()});
       return;
     }
-    const result = await Manager.create(req.body, { fields: inputfields });
+    await Manager.create(req.body);
     res.status(201).json("Added Task succesfully");
   } catch (error) {
     res.status(401).json("Error Occurred");

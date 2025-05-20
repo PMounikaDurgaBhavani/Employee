@@ -9,11 +9,10 @@ const sequelize = new Sequelize({
   password: process.env.password as string,
   dialect: "mysql",
   host: process.env.host,
-  sync: { alter: true },
+  sync: { alter: true }
 });
 
 (async () => {
-  await sequelize.sync();
   await sequelize
     .authenticate()
     .then((t) => {
