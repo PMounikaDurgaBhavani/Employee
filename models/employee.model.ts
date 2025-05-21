@@ -21,8 +21,7 @@ Employee.init(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
+      allowNull: false
     },
     salary: {
       type: DataTypes.INTEGER,

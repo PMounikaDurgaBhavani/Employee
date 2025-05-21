@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import { Employee, Manager } from "../models";
 import checkEmployee from "../middleware/employeeauth";
+import {checkemail,checkusername} from "../controllers/checkEmail";
 
 const router = express.Router();
 
-router.post("/employee",checkEmployee, async (req: Request, res: Response) => {
+router.post("/employee",checkEmployee,checkemail,checkusername, async (req: Request, res: Response) => {
   try {
     await Employee.create(req.body);
     res.status(201).send("Employee added succesfully");
@@ -34,7 +35,7 @@ router.get("/employee/:username", async (req, res) => {
   }
 });
 
-router.put("/employee/:username", async (req, res) => {
+router.put("/employee/:username",checkemail, async (req, res) => {
   try {
     const result = await Employee.findByPk(req.params.username);
     if (!result) {
