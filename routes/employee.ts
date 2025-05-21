@@ -35,7 +35,7 @@ router.get("/employee/:username", async (req, res) => {
   }
 });
 
-router.put("/employee/:username",checkemail, async (req, res) => {
+router.put("/employee/:username",checkusername, async (req, res) => {
   try {
     const result = await Employee.findByPk(req.params.username);
     if (!result) {

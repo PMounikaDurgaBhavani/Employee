@@ -1,9 +1,10 @@
 import { Model, DataTypes } from "sequelize";
 import sequelize from "../db/sequelizedb";
+import bcrypt from "bcrypt";
 
 export class Employee extends Model {
   public username!: string;
-  private password!: string;
+  public password!: string;
   public email!: string;
   public salary!: number;
 }
@@ -33,6 +34,12 @@ Employee.init(
     tableName: "Employees",
     modelName: "Employee",
     timestamps: false,
+    hooks:{
+      beforeCreate:async(employee:Employee)=>{
+        const saltRound=10;
+          employee.password=await bcrypt.hash(employee.password,saltRound)
+      }
+    }
   }
 );
 
