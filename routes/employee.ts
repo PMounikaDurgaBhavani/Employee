@@ -1,19 +1,25 @@
 import express, { Request, Response } from "express";
 import { Employee, Manager } from "../models";
 import checkEmployee from "../middleware/employeeauth";
-import {checkemail,checkusername} from "../controllers/checkEmail";
+import { checkemail, checkusername } from "../controllers/checkEmail";
 
 const router = express.Router();
 
-router.post("/employee",checkEmployee,checkemail,checkusername, async (req: Request, res: Response) => {
-  try {
-    await Employee.create(req.body);
-    res.status(201).send("Employee added succesfully");
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Error Occurred");
+router.post(
+  "/employee",
+  checkEmployee,
+  checkemail,
+  checkusername,
+  async (req: Request, res: Response) => {
+    try {
+      await Employee.create(req.body);
+      res.status(201).send("Employee added succesfully");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Error Occurred");
+    }
   }
-});
+);
 
 router.get("/employee", async (req, res) => {
   try {
@@ -27,7 +33,10 @@ router.get("/employee", async (req, res) => {
 
 router.get("/employee/:username", async (req, res) => {
   try {
-    const result = await Employee.findByPk(req.params.username);
+    const result = await Employee.findOne({
+      where: { username: req.params.username },
+    });
+    
     res.status(201).json(result);
   } catch (error) {
     console.log(error);
@@ -35,7 +44,7 @@ router.get("/employee/:username", async (req, res) => {
   }
 });
 
-router.put("/employee/:username",checkusername, async (req, res) => {
+router.put("/employee/:username", checkusername, async (req, res) => {
   try {
     const result = await Employee.findByPk(req.params.username);
     if (!result) {

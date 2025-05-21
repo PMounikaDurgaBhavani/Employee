@@ -3,6 +3,7 @@ import sequelize from "../db/sequelizedb";
 import bcrypt from "bcrypt";
 
 export class Employee extends Model {
+
   public username!: string;
   public password!: string;
   public email!: string;
