@@ -1,47 +1,18 @@
 import express, { Request, Response } from "express";
 import { Employee, Manager } from "../models";
-import { body, validationResult } from "express-validator";
+import checkEmployee from "../middleware/employeeauth";
 
 const router = express.Router();
 
-router.post(
-  "/employee",
-  [
-    body("username")
-      .notEmpty()
-      .withMessage("Username should not be empty")
-      .isAlphanumeric()
-      .withMessage("Username should be alphanumeric"),
-
-    body("password")
-      .notEmpty()
-      .withMessage("Password should not be empty")
-      .isLength({ min: 6 })
-      .withMessage("Min length is 6"),
-
-    body("email")
-      .notEmpty()
-      .withMessage("Email should not be empty")
-      .isEmail()
-      .withMessage("Invalid Email"),
-
-    body("salary").notEmpty().withMessage("salary should not be empty"),
-  ],
-  async (req: Request, res: Response) => {
-    try {
-      const error = validationResult(req);
-      if (!error.isEmpty()) {
-        res.status(400).json({ error: error.array() });
-        return;
-      }
-      await Employee.create(req.body);
-      res.status(201).send("Employee added succesfully");
-    } catch (error) {
-      console.log(error);
-      res.status(500).send("Error Occurred");
-    }
+router.post("/employee",checkEmployee, async (req: Request, res: Response) => {
+  try {
+    await Employee.create(req.body);
+    res.status(201).send("Employee added succesfully");
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Error Occurred");
   }
-);
+});
 
 router.get("/employee", async (req, res) => {
   try {
